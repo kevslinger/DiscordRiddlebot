@@ -1,12 +1,7 @@
-import pickle
 import os
 import random
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 from dotenv.main import load_dotenv
 from discord.ext import commands
-
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
