@@ -40,6 +40,7 @@ class RiddleCog(commands.Cog):
             json.dump(json_creds, f)
         print("************")
         print(os.path.exists('client_secret.json'))
+        print(json.load(open('client_secret.json')))
         print(os.listdir())
         #creds = ServiceAccountCredentials.from_json_keyfile_name('my_credentials.json', SCOPES)
         creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', SCOPES)
