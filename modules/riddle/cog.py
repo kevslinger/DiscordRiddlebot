@@ -4,6 +4,7 @@ import json
 from dotenv.main import load_dotenv
 from discord.ext import commands
 import gspread
+import asyncio
 from oauth2client.service_account import ServiceAccountCredentials
 
 load_dotenv()
