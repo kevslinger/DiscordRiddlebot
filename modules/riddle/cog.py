@@ -140,27 +140,30 @@ class RiddleCog(commands.Cog):
         """
         # log command in console
         print("Received !answer")
-        
-        print(ctx.message.content)
-        if ctx.message.content == '!answer':
-            await ctx.send("Usage: !answer ||your answer||")
-            return
-        # People will spoiler their message with ||
-        user_answer = ctx.message.content.lower().replace('!answer ', '').replace('|', '').strip()
-        # some answers are answer1, answer2 and others are answer1,answer2
-        # TODO: better way to do this?
-        if user_answer in [correct_answer.lower() for correct_answer in self.current_riddle_possible_answers.split(', ')] or\
-                user_answer in [correct_answer.lower() for correct_answer in self.current_riddle_possible_answers.split(',')]:
-            await ctx.send(f"Congrats {ctx.message.author.mention}! You are correct. All acceptable answers were  " + \
-                           f"||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}|| ",
-                           reference=ctx.message, mention_author=True)
+
+        if self.current_riddle is not None:
+            print(ctx.message.content)
+            if ctx.message.content == '!answer':
+                await ctx.send("Usage: !answer ||your answer||")
+                return
+            # People will spoiler their message with ||
+            user_answer = ctx.message.content.lower().replace('!answer ', '').replace('|', '').strip()
+            # some answers are answer1, answer2 and others are answer1,answer2
+            # TODO: better way to do this?
+            if user_answer in [correct_answer.lower() for correct_answer in self.current_riddle_possible_answers.split(', ')] or\
+               user_answer in [correct_answer.lower() for correct_answer in self.current_riddle_possible_answers.split(',')]:
+                await ctx.send(f"Congrats {ctx.message.author.mention}! You are correct. All acceptable answers were  " + \
+                               f"||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}|| ",
+                               reference=ctx.message, mention_author=True)
+            else:
+                if len(self.current_riddle_hints) > 1:
+                    await ctx.send(f"You're wrong {ctx.message.author.mention}. Can I tempt you in taking a !hint? " + \
+                                   "If you'd like to give up, use !showanswer", reference=ctx.message, mention_author=True)
+                else:      
+                    await ctx.send(f"You're wrong {ctx.message.author.mention}. There are no hints for this riddle, but" + \
+                                   f" if you'd like to give up, use !showanswer", reference=ctx.message, mention_author=True)
         else:
-            if len(self.current_riddle_hints) > 1:
-                await ctx.send(f"You're wrong {ctx.message.author.mention}. Can I tempt you in taking a !hint? " + \
-                               "If you'd like to give up, use !showanswer", reference=ctx.message, mention_author=True)
-            else:      
-                await ctx.send(f"You're wrong {ctx.message.author.mention}. There are no hints for this riddle, but" + \
-                               f" if you'd like to give up, use !showanswer", reference=ctx.message, mention_author=True)
+            await ctx.send("No current riddle. Use !riddle to receive a riddle")
                 
     # Command to use when the user has given up.
     # displays the answer (in spoiler text)
@@ -172,15 +175,18 @@ class RiddleCog(commands.Cog):
         """
         # Log command in console
         print("Received !showanswer")
-        
-        output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
-        if len(self.current_riddle_possible_answers.split(',')) > 1:
-            output_msg += f"I would have accepted any of " + \
-                          f"||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}||" + \
-                          f"as a correct answer\n"
-        output_msg += "Thanks for playing! Use !riddle to get a new riddle."
-        await ctx.send(output_msg)
-        self.reset_riddle()
+
+        if self.current_riddle is not None:
+            output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
+            if len(self.current_riddle_possible_answers.split(',')) > 1:
+                output_msg += f"I would have accepted any of " + \
+                    f"||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}||" + \
+                    f"as a correct answer\n"
+            output_msg += "Thanks for playing! Use !riddle to get a new riddle."
+            await ctx.send(output_msg)
+            self.reset_riddle()
+        else:
+            await ctx.send("No current riddle. Use !riddle to receive a riddle")
 
     # Function to clean the bot's riddle so it can start a new one.
     def reset_riddle(self):
