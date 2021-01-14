@@ -23,7 +23,7 @@ def main():
         for guild in client.guilds:
             print(f"{client.user.name} has connected to the following guild: {guild.name} (id: {guild.id})")
 
-    client.loop.create_task(reload(client))
+    #client.loop.create_task(reload(client))
     client.run(DISCORD_TOKEN)
 
     

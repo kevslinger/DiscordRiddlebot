@@ -41,10 +41,23 @@ class RiddleCog(commands.Cog):
                 json.dump(json_creds, f)
         creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', SCOPES)
         client = gspread.authorize(creds)
+        
         sheet = client.open_by_key(SHEET_KEY).sheet1
         self.riddles = sheet.get_all_values()[1:]
+        
+        bot.loop.create_task(reload(client))
+        
+    # Reload the Google sheet every 10 minutes so we can dynamically add
+    # Without needing to restart the bot
+    def reload(client):
+        await bot.wait_until_ready()
+        while True:
+            await asyncio.sleep(600) # 10 minutes
+            sheet = client.open_by_key(SHEET_KEY).sheet1
+            self.riddles = sheet.get_all_values()[1:]
+            print("Reloaded riddle sheet")
 
-
+            
     # When we have an active riddle, using !riddle will not change the riddle
     # Instead, someone will need to use !forceriddle to get a new one
     @commands.command(name='forceriddle')
@@ -152,7 +165,7 @@ class RiddleCog(commands.Cog):
         print("Received !showanswer")
         
         output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
-        if len(self.current_riddle_possible_answers) > 1:
+        if len(self.current_riddle_possible_answers.split(',')) > 1:
             output_msg += f"I would have accepted any of ||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}|| as a correct answer\n"
         output_msg += "Thanks for playing! Use !riddle to get a new riddle."
         await ctx.send(output_msg)
