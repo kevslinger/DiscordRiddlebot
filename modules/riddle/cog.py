@@ -54,7 +54,7 @@ class RiddleCog(commands.Cog):
         await bot.wait_until_ready()
         while True:
             await asyncio.sleep(600) # 10 minutes
-            sheet = client.open_by_key(SHEET_KEY).sheet1
+            sheet = client.open_by_key(sheet_key).sheet1
             self.riddles = sheet.get_all_values()[1:]
             print("Reloaded riddle sheet")
 
