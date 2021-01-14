@@ -8,9 +8,9 @@ class AddRiddleCog(commands.Cog):
 
     @commands.command(name='addriddle')
     async def addriddle(self, ctx):
-        '''
+        """
         Suggest a riddle to the bot!
-        '''
+        """
         # Log command to console
         print("Received !addriddle")
         

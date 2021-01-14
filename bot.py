@@ -23,17 +23,7 @@ def main():
         for guild in client.guilds:
             print(f"{client.user.name} has connected to the following guild: {guild.name} (id: {guild.id})")
 
-    #client.loop.create_task(reload(client))
     client.run(DISCORD_TOKEN)
-
-    
-async def reload(bot):
-    await bot.wait_until_ready()
-    while True:
-        await asyncio.sleep(600) # 10 minutes
-    
-        bot.reload_extension("modules.riddle.cog")
-        print("Reloaded riddle sheet")
 
         
 if __name__ == '__main__':
