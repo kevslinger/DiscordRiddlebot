@@ -36,8 +36,11 @@ class RiddleCog(commands.Cog):
         for param in JSON_PARAMS:
             json_creds[param] = os.getenv(param)
         print(json_creds)
-        #with open('my_credentials.json', 'w') as f:
-        #    json.dump(json_creds, f)
+        with open('my_credentials.json', 'w') as f:
+            json.dump(json_creds, f)
+        print("************")
+        print(os.path.exists('my_credentials.json'))
+        print(os.listdir())
         #creds = ServiceAccountCredentials.from_json_keyfile_name('my_credentials.json', SCOPES)
         #creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', SCOPES)
         creds = ServiceAccountCredentials.from_json_keyfile_dict(json_creds, SCOPES)
