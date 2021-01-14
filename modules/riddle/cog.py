@@ -1,11 +1,14 @@
 import os
 import random
+import json
 from dotenv.main import load_dotenv
 from discord.ext import commands
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 load_dotenv()
+
+JSON_PARAMS = ["type", "project_id", "private_key_id", "private_key", "client_email", "client_id", "auth_uri", "token_uri", "auth_provider_x509_cert_url", "client_x509_cert_url"]
 
 
 # RIDDLE_ROLE_ID = int(os.getenv("RIDDLE_ROLE_ID")) #TODO: create riddle role?
@@ -27,8 +30,18 @@ class RiddleCog(commands.Cog):
         SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 
-        SHEET_KEY = '1B-eijTUiE0unjKOpFdXqM_sDmlT58kNCvkg7wvF5nrE'
-        creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', SCOPES)
+        SHEET_KEY = os.getenv('SHEET_KEY').replace('\'', '')
+
+        json_creds = dict()
+        for param in JSON_PARAMS:
+            json_creds[param] = os.getenv(param)
+        with open('my_credentials.json', 'w') as f:
+            json.dump(json_creds, f)
+        creds = ServiceAccountCredentials.from_json_keyfile_name('my_credentials.json', SCOPES)
+        #creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', SCOPES)
+        print(json_creds)
+        #creds = ServiceAccountCredentials.from_json_keyfile_dict(json_creds, SCOPES)
+        #creds = ServiceAccountCredentials.from_json(json.dumps(json_creds))
         client = gspread.authorize(creds)
         sheet = client.open_by_key(SHEET_KEY).sheet1
         # riddles holds all the sheets info, excluding the headers
