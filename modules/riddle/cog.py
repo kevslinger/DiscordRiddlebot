@@ -46,11 +46,11 @@ class RiddleCog(commands.Cog):
         sheet = client.open_by_key(SHEET_KEY).sheet1
         self.riddles = sheet.get_all_values()[1:]
         
-        bot.loop.create_task(self.reload(bot, client))
+        bot.loop.create_task(self.reload(bot, SHEET_KEY, client))
         
     # Reload the Google sheet every 10 minutes so we can dynamically add
     # Without needing to restart the bot
-    async def reload(self, bot, client):
+    async def reload(self, bot, sheet_key, client):
         await bot.wait_until_ready()
         while True:
             await asyncio.sleep(600) # 10 minutes
