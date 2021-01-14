@@ -49,7 +49,7 @@ class RiddleCog(commands.Cog):
         
     # Reload the Google sheet every 10 minutes so we can dynamically add
     # Without needing to restart the bot
-    def reload(client):
+    async def reload(self, client):
         await bot.wait_until_ready()
         while True:
             await asyncio.sleep(600) # 10 minutes
