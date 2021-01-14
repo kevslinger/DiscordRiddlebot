@@ -32,24 +32,16 @@ class RiddleCog(commands.Cog):
 
         SHEET_KEY = os.getenv('SHEET_KEY').replace('\'', '')
 
-        json_creds = dict()
-        for param in JSON_PARAMS:
-            json_creds[param] = os.getenv(param).replace('\"', '').replace('\\n', '\n')
-        print(json_creds)
-        with open('client_secret.json', 'w') as f:
-            json.dump(json_creds, f)
-        print("************")
-        print(os.path.exists('client_secret.json'))
-        print(json.load(open('client_secret.json')))
-        print(os.listdir())
-        for env in os.environ:
-            print(f'{env} = {os.getenv(env)}')
-        #creds = ServiceAccountCredentials.from_json_keyfile_name('my_credentials.json', SCOPES)
+        # Write the credentials file if we don't have it
+        if not os.path.exists('client_secret.json'):
+            json_creds = dict()
+            for param in JSON_PARAMS:
+                json_creds[param] = os.getenv(param).replace('\"', '').replace('\\n', '\n')
+            with open('client_secret.json', 'w') as f:
+                json.dump(json_creds, f)
         creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', SCOPES)
-        #creds = ServiceAccountCredentials.from_json_keyfile_dict(json_creds, SCOPES)
         client = gspread.authorize(creds)
         sheet = client.open_by_key(SHEET_KEY).sheet1
-        # riddles holds all the sheets info, excluding the headers
         self.riddles = sheet.get_all_values()[1:]
 
 
