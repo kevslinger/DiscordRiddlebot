@@ -34,7 +34,7 @@ class RiddleCog(commands.Cog):
 
         json_creds = dict()
         for param in JSON_PARAMS:
-            json_creds[param] = os.getenv(param).replace('\"', '')
+            json_creds[param] = os.getenv(param).replace('\"', '').replace('\\n', '\n'
         print(json_creds)
         with open('client_secret.json', 'w') as f:
             json.dump(json_creds, f)
