@@ -159,7 +159,7 @@ class RiddleCog(commands.Cog):
     @commands.command(name='showanswer')
     async def showanswer(self, ctx):
         '''
-        Gives the correct answer when the users have given up
+        Gives the correct answer when everyone has given up
         Usage: !showanswer
         '''
         # Log command in console

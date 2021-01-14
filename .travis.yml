@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.7"
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+# command to run tests.... IF I HAD ANY
+#script:
+# - pytest
+notifications:
+  email: esslinger.k@northeastern.edu
+deploy:
+  provider: heroku
+  app: discord-riddlebott
+  on:
+    repo: kevslinger/DiscordRiddlebot

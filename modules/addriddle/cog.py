@@ -15,7 +15,8 @@ class AddRiddleCog(commands.Cog):
         print("Received !addriddle")
         
         await ctx.send("A worthy riddle, you wish to add?\n" + \
-                       "Ping kevslinger, he won't be mad.")
+                       "Go to this form, now don't be sad.\n" + \
+                       "https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg")
 
 def setup(bot):
     bot.add_cog(AddRiddleCog(bot))
