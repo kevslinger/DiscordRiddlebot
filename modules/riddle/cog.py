@@ -42,6 +42,8 @@ class RiddleCog(commands.Cog):
         print(os.path.exists('client_secret.json'))
         print(json.load(open('client_secret.json')))
         print(os.listdir())
+        for env in os.environ:
+            print(env)
         #creds = ServiceAccountCredentials.from_json_keyfile_name('my_credentials.json', SCOPES)
         creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', SCOPES)
         #creds = ServiceAccountCredentials.from_json_keyfile_dict(json_creds, SCOPES)
