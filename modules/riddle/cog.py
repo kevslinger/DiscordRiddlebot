@@ -43,7 +43,7 @@ class RiddleCog(commands.Cog):
         creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scopes)
         client = gspread.authorize(creds)
         
-        sheet = client.open_by_key(sheet_key).sheet1
+        sheet = client.open_by_key(sheet_key).worksheet("Riddles")
         self.riddles = sheet.get_all_values()[1:]
         
         bot.loop.create_task(self.reload(bot, sheet_key, client))
