@@ -106,10 +106,10 @@ class RiddleCog(commands.Cog):
                 continue
             self.current_riddle_hints.append(riddle_row[hint_idx])
 
-        embed = discord.Embed(title=f"Riddle #{self.current_riddle_id}", color=0x109319)
-        embed.add_field(name="Riddle", value=f"{self.current_riddle}")
-        embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!")
-        embed.add_field(name="Hint", value="If you're stuck, try ?hint to get a hint.")
+        embed = discord.Embed(title=f"Riddle #{self.current_riddle_id}", color=0xd4e4ff)
+        embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
+        embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!", inline=False)
+        embed.add_field(name="Hint", value="If you're stuck, try ?hint to get a hint.", inline=False)
         await ctx.send(embed=embed)
 
         # Send the hint out. Good luck, users!
