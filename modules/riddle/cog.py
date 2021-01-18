@@ -104,9 +104,16 @@ class RiddleCog(commands.Cog):
             if riddle_row[hint_idx] is None or riddle_row[hint_idx] == '':
                 continue
             self.current_riddle_hints.append(riddle_row[hint_idx])
+
+        embed = discord.Embed(title=f"Riddle #{self.current_riddle_id}", color=0x109319)
+        embed.add_field(name="Riddle", value=f"{self.current_riddle}")
+        embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!")
+        embed.add_field(name="Hint", value="If you're stuck, try ?hint to get a hint.")
+        await ctx.send(embed=embed)
+
         # Send the hint out. Good luck, users!
-        await ctx.send(f"Riddle #{self.current_riddle_id}: {self.current_riddle}\nUse ?answer to make a guess. " + \
-                       f"Remember to Spoiler Text your answers!")
+        #await ctx.send(f"Riddle #{self.current_riddle_id}: {self.current_riddle}\nUse ?answer to make a guess. " + \
+        #               f"Remember to Spoiler Text your answers!")
 
     # Command to give a hint. The hint will have spoiler text covering it.
     @commands.command(name='hint')
