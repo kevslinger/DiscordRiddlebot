@@ -59,16 +59,16 @@ class RiddleCog(commands.Cog):
             print("Reloaded riddle sheet")
 
             
-    # When we have an active riddle, using !riddle will not change the riddle
-    # Instead, someone will need to use !forceriddle to get a new one
+    # When we have an active riddle, using ?riddle will not change the riddle
+    # Instead, someone will need to use ?forceriddle to get a new one
     @commands.command(name='forceriddle')
     async def forceriddle(self, ctx):
         """
         Reset the current riddle and give a new one
-        Usage: !forceriddle
+        Usage: ?forceriddle
         """
         # log command in console
-        print("Received !forceriddle")
+        print("Received ?forceriddle")
 
         self.reset_riddle()
         await self.riddle(ctx)
@@ -80,14 +80,14 @@ class RiddleCog(commands.Cog):
     async def riddle(self, ctx):
         """
         Give a riddle from our Riddle Sheet
-        Usage: !riddle
+        Usage: ?riddle
         """
         # log command in console
-        print("Received !riddle")
+        print("Received ?riddle")
 
         if self.current_riddle is not None:
             await ctx.send(f"The current riddle is: {self.current_riddle}.\nWant a new one? " + \
-                           f"Force me to give you a new riddle with !forceriddle")
+                           f"Force me to give you a new riddle with ?forceriddle")
             return 
         # TODO: get specific riddle from riddle IDif len()
         riddle_row_num = random.randint(0, len(self.riddles)-1)
@@ -105,7 +105,7 @@ class RiddleCog(commands.Cog):
                 continue
             self.current_riddle_hints.append(riddle_row[hint_idx])
         # Send the hint out. Good luck, users!
-        await ctx.send(f"Riddle #{self.current_riddle_id}: {self.current_riddle}\nUse !answer to make a guess. " + \
+        await ctx.send(f"Riddle #{self.current_riddle_id}: {self.current_riddle}\nUse ?answer to make a guess. " + \
                        f"Remember to Spoiler Text your answers!")
 
     # Command to give a hint. The hint will have spoiler text covering it.
@@ -113,10 +113,10 @@ class RiddleCog(commands.Cog):
     async def hint(self, ctx):
         """
         Gives a hint
-        Usage: !hint
+        Usage: ?hint
         """
         # Log command in console
-        print("Received !hint")
+        print("Received ?hint")
         
         if self.current_riddle is not None:
             if len(self.current_riddle_hints) > 0:
@@ -124,11 +124,11 @@ class RiddleCog(commands.Cog):
                 await ctx.send(f"Hint {self.current_given_hints}: ||{self.current_riddle_hints.pop(0)}||")
             elif self.current_given_hints > 0:
                 await ctx.send(f"Only {self.current_given_hints} hints were available for this riddle\n" + \
-                               f"If you're stumped, you can use !showanswer to get the answer.")
+                               f"If you're stumped, you can use ?showanswer to get the answer.")
             else:
-                await ctx.send(f"No hints for this riddle.\nIf you're stumped, you can use !showanswer to get the answer.")
+                await ctx.send(f"No hints for this riddle.\nIf you're stumped, you can use ?showanswer to get the answer.")
         else:
-            await ctx.send("No current riddle. Use !riddle to receive a riddle")
+            await ctx.send("No current riddle. Use ?riddle to receive a riddle")
 
     # Command to check the user's answer. They will be replied to telling them whether or not their
     # answer is correct. If they are incorrect, they will be asked if they want a hint or to giveup
@@ -136,18 +136,18 @@ class RiddleCog(commands.Cog):
     async def answer(self, ctx):
         """
         Check your  answer
-        Usage: !answer ||your answer||
+        Usage: ?answer ||your answer||
         """
         # log command in console
-        print("Received !answer")
+        print("Received ?answer")
 
         if self.current_riddle is not None:
             print(ctx.message.content)
-            if ctx.message.content == '!answer':
-                await ctx.send("Usage: !answer ||your answer||")
+            if ctx.message.content == '?answer':
+                await ctx.send("Usage: ?answer ||your answer||")
                 return
             # People will spoiler their message with ||
-            user_answer = ctx.message.content.lower().replace('!answer ', '').replace('|', '').strip()
+            user_answer = ctx.message.content.lower().replace('?answer ', '').replace('|', '').strip()
             # some answers are answer1, answer2 and others are answer1,answer2
             # TODO: better way to do this?
             if user_answer in [correct_answer.lower() for correct_answer in self.current_riddle_possible_answers.split(', ')] or\
@@ -157,13 +157,13 @@ class RiddleCog(commands.Cog):
                                reference=ctx.message, mention_author=True)
             else:
                 if len(self.current_riddle_hints) > 1:
-                    await ctx.send(f"You're wrong {ctx.message.author.mention}. Can I tempt you in taking a !hint? " + \
-                                   "If you'd like to give up, use !showanswer", reference=ctx.message, mention_author=True)
+                    await ctx.send(f"You're wrong {ctx.message.author.mention}. Can I tempt you in taking a ?hint? " + \
+                                   "If you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
                 else:      
                     await ctx.send(f"You're wrong {ctx.message.author.mention}. There are no hints for this riddle, but" + \
-                                   f" if you'd like to give up, use !showanswer", reference=ctx.message, mention_author=True)
+                                   f" if you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
         else:
-            await ctx.send("No current riddle. Use !riddle to receive a riddle")
+            await ctx.send("No current riddle. Use ?riddle to receive a riddle")
                 
     # Command to use when the user has given up.
     # displays the answer (in spoiler text)
@@ -171,10 +171,10 @@ class RiddleCog(commands.Cog):
     async def showanswer(self, ctx):
         """
         Gives the correct answer when everyone has given up
-        Usage: !showanswer
+        Usage: ?showanswer
         """
         # Log command in console
-        print("Received !showanswer")
+        print("Received ?showanswer")
 
         if self.current_riddle is not None:
             output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
@@ -182,11 +182,11 @@ class RiddleCog(commands.Cog):
                 output_msg += f"I would have accepted any of " + \
                     f"||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}||" + \
                     f"as a correct answer\n"
-            output_msg += "Thanks for playing! Use !riddle to get a new riddle."
+            output_msg += "Thanks for playing! Use ?riddle to get a new riddle."
             await ctx.send(output_msg)
             self.reset_riddle()
         else:
-            await ctx.send("No current riddle. Use !riddle to receive a riddle")
+            await ctx.send("No current riddle. Use ?riddle to receive a riddle")
 
     # Function to clean the bot's riddle so it can start a new one.
     def reset_riddle(self):
