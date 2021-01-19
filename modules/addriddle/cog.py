@@ -1,4 +1,6 @@
+import discord
 from discord.ext import commands
+
 
 
 class AddRiddleCog(commands.Cog):
@@ -6,17 +8,21 @@ class AddRiddleCog(commands.Cog):
         # Bot and riddle initializations
         self.bot = bot
 
-    @commands.command(name='addriddle')
+    @commands.command(name='addriddle', aliases=['add'])
     async def addriddle(self, ctx):
         """
         Suggest a riddle to the bot!
         """
         # Log command to console
         print("Received !addriddle")
-        
-        await ctx.send("A worthy riddle, you wish to add?\n" + \
-                       "Go to this form, now don't be sad.\n" + \
-                       "https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg")
+
+        embed = discord.Embed(title=f"Add a Riddle!", url="https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg")
+        embed.add_field(name="How to add", value=f"A worthy riddle, you wish to add?\n" + \
+                        "Go to [this form](https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg), now don't be sad.")
+        await ctx.send(embed=embed)
+        #await ctx.send("A worthy riddle, you wish to add?\n" + \
+        #               "Go to this form, now don't be sad.\n" + \
+        #               "https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg")
 
 def setup(bot):
     bot.add_cog(AddRiddleCog(bot))

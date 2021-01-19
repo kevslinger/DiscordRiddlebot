@@ -62,7 +62,7 @@ class RiddleCog(commands.Cog):
             
     # When we have an active riddle, using ?riddle will not change the riddle
     # Instead, someone will need to use ?forceriddle to get a new one
-    @commands.command(name='forceriddle')
+    @commands.command(name='forceriddle', aliases=['force'])
     async def forceriddle(self, ctx):
         """
         Reset the current riddle and give a new one
@@ -74,10 +74,19 @@ class RiddleCog(commands.Cog):
         self.reset_riddle()
         await self.riddle(ctx)
 
+
+    def create_riddle_embed(self):
+        embed = discord.Embed(title=f"Riddle #{self.current_riddle_id}", color=0xd4e4ff)
+        embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
+        embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!", inline=False)
+        embed.add_field(name="Hint", value="If you're stuck, try ?hint to get a hint.", inline=False)
+        embed.add_field(name="New Riddle", value="Want a new riddle? Force me to give you one with ?forceriddle")
+        return embed
+
     # Command to give the user a riddle.
     # If there is already an active riddle, the user will be shown that
     # a new riddle will not be created if an active one exists.
-    @commands.command(name='riddle')
+    @commands.command(name='riddle', aliases=['r'])
     async def riddle(self, ctx):
         """
         Give a riddle from our Riddle Sheet
@@ -87,8 +96,10 @@ class RiddleCog(commands.Cog):
         print("Received ?riddle")
 
         if self.current_riddle is not None:
-            await ctx.send(f"The current riddle is: {self.current_riddle}.\nWant a new one? " + \
-                           f"Force me to give you a new riddle with ?forceriddle")
+            embed = self.create_riddle_embed()
+            await ctx.send(embed=embed)
+            #await ctx.send(f"The current riddle is: {self.current_riddle}.\nWant a new one? " + \
+            #               f"Force me to give you a new riddle with ?forceriddle")
             return 
         # TODO: get specific riddle from riddle IDif len()
         riddle_row_num = random.randint(0, len(self.riddles)-1)
@@ -105,11 +116,8 @@ class RiddleCog(commands.Cog):
             if riddle_row[hint_idx] is None or riddle_row[hint_idx] == '':
                 continue
             self.current_riddle_hints.append(riddle_row[hint_idx])
-
-        embed = discord.Embed(title=f"Riddle #{self.current_riddle_id}", color=0xd4e4ff)
-        embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
-        embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!", inline=False)
-        embed.add_field(name="Hint", value="If you're stuck, try ?hint to get a hint.", inline=False)
+        embed = self.create_riddle_embed()
+        
         await ctx.send(embed=embed)
 
         # Send the hint out. Good luck, users!
@@ -117,7 +125,7 @@ class RiddleCog(commands.Cog):
         #               f"Remember to Spoiler Text your answers!")
 
     # Command to give a hint. The hint will have spoiler text covering it.
-    @commands.command(name='hint')
+    @commands.command(name='hint', aliases=['h'])
     async def hint(self, ctx):
         """
         Gives a hint
@@ -175,7 +183,7 @@ class RiddleCog(commands.Cog):
                 
     # Command to use when the user has given up.
     # displays the answer (in spoiler text)
-    @commands.command(name='showanswer')
+    @commands.command(name='showanswer', aliases=['show', 'giveup'])
     async def showanswer(self, ctx):
         """
         Gives the correct answer when everyone has given up
