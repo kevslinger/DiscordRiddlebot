@@ -116,7 +116,6 @@ class RiddleCog(commands.Cog):
             else:
                 embed = utils.create_answer_embed(ctx, self.current_riddle_id, self.current_riddle, self.current_riddle_hints,
                                                   self.current_riddle_possible_answers)
-                embed.set_author(name="Submitted a Guess!", icon_url=ctx.message.author.avatar_url)
         else:
             embed = utils.create_empty_embed()
 
@@ -173,7 +172,8 @@ class RiddleCog(commands.Cog):
         riddle_row = self.riddles[riddle_row_num]
         self.current_riddle_id = riddle_row[0]
         self.current_riddle = riddle_row[1]
-        self.current_riddle_possible_answers = riddle_row[2]
+        # The list of acceptable answers will be separated by commas
+        self.current_riddle_possible_answers = [answer.strip().lower() for answer in riddle_row[2].split(',')]
 
         # Add all the available hints
         self.current_riddle_hints = []

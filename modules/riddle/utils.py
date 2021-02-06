@@ -79,24 +79,31 @@ def create_hint_embed(riddle_id, riddle, hints, num_given_hints):
 
 
 def create_answer_embed(ctx, riddle_id, riddle, hints, answers):
+    """
+    Create the Discord embed to show when the user makes a guess
+    :param ctx: The discord context
+    :param riddle_id: (int) The unique ID for the riddle
+    :param riddle: (str) The current riddle
+    :param hints: (list) the list of hints available for the riddle
+    :param answers: (list) the list of acceptable answers
+    :return embed: (discord.Embed)
+    """
     # Do not accept an answer that isn't spoilered!
     # People will spoiler their message with ||
-    user_answer = ctx.message.content.lower().replace('?answer ', '').replace('|', '').strip()
+    user_answer = ctx.message.content.lower().replace('?answer ', '').replace('||', '').strip()
     # some answers are answer1, answer2 and others are answer1,answer2
     # TODO: better way to do this?
-    if user_answer in [correct_answer.lower() for correct_answer in answers.split(', ')] or \
-            user_answer in [correct_answer.lower() for correct_answer in
-                            answers.split(',')]:
+    if user_answer in answers:
         embed = discord.Embed(color=EMBED_COLOR)
         embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
         if len(answers) > 1:
-            possible_answers = " I would have accepted any of || [" + \
-                               ", ".join(answers.split(",")) + "] ||"
+            possible_answers = " I would have accepted any of || [" + ", ".join(answers) + "] ||"
         else:
-            possible_answers = ""
-        embed.add_field(name="Correct Answer",
+            possible_answers = answers[0]
+        embed.add_field(name="Correct Answer!",
                         value=f"Congrats {ctx.message.author.mention}! You are correct.{possible_answers}",
                         inline=False)
+        embed.set_author(name="Answered Correctly!", icon_url=ctx.message.author.avatar_url)
     else:
         if len(hints) > 1:
             embed = discord.Embed(color=EMBED_COLOR)
@@ -112,6 +119,8 @@ def create_answer_embed(ctx, riddle_id, riddle, hints, answers):
                             value=f"Sorry {ctx.message.author.mention}! You are incorrect. There are no hints" +
                                   " for this riddle. If you'd like to give up, use ?showanswer",
                             inline=False)
+        embed.set_author(name="Answered Incorrectly!", icon_url=ctx.message.author.avatar_url)
+
     return embed
 
 
@@ -121,9 +130,9 @@ def create_showanswer_embed(riddle_id, riddle, hints, answers):
     for hint_idx, hint in enumerate(hints):
         embed.add_field(name=f"Hint #{hint_idx + 1}", value=f"|| {hints[hint_idx]} ||",
                         inline=False)
-    if len(answers.split(',')) > 1:
+    if len(answers) > 1:
         embed.add_field(name="Answer", value="I would have accepted any of " +
-                                             f"|| {'[ ' + ', '.join(answers.split(',')) + ' ]'} ||",
+                                             f"|| {'[ ' + ', '.join(answers) + ' ]'} ||",
                         inline=False)
     else:
         embed.add_field(name="Answer", value=f"The answer is || {answers[0]} ||",
