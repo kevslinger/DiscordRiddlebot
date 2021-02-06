@@ -16,7 +16,6 @@ def create_riddle_embed(riddle_id, riddle, num_hints):
 
     :return embed: (discord.Embed) The embed we create for the riddle
     """
-    #embed = discord.Embed(title=f"Riddle #{riddle_id}", color=EMBED_COLOR)
     embed = discord.Embed(color=EMBED_COLOR)
     embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
     embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!",
@@ -48,14 +47,14 @@ def create_empty_answer_command_embed():
     Function to create an embed to display command usage.
     :return embed: (discord.Embed) The embed we create
     """
-    embed = discord.Embed(title="Answer", color=EMBED_COLOR)
+    embed = discord.Embed(color=EMBED_COLOR)
     embed.add_field(name="Answer Usage", value="?answer ||your answer||", inline=False)
     embed.add_field(name="Giving Up?", value="To give up and see the answer, use ?showanswer", inline=False)
     return embed
 
 
 def create_hint_embed(riddle_id, riddle, hints, num_given_hints):
-    embed = discord.Embed(title=f"Hint!", color=EMBED_COLOR)
+    embed = discord.Embed(color=EMBED_COLOR)
     embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
 
     # If there are no hints
@@ -88,28 +87,28 @@ def create_answer_embed(ctx, riddle_id, riddle, hints, answers):
     if user_answer in [correct_answer.lower() for correct_answer in answers.split(', ')] or \
             user_answer in [correct_answer.lower() for correct_answer in
                             answers.split(',')]:
-        embed = discord.Embed(title="Correct Answer!", color=EMBED_COLOR)
+        embed = discord.Embed(color=EMBED_COLOR)
         embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
         if len(answers) > 1:
             possible_answers = " I would have accepted any of || [" + \
                                ", ".join(answers.split(",")) + "] ||"
         else:
             possible_answers = ""
-        embed.add_field(name="Answer",
+        embed.add_field(name="Correct Answer",
                         value=f"Congrats {ctx.message.author.mention}! You are correct.{possible_answers}",
                         inline=False)
     else:
         if len(hints) > 1:
-            embed = discord.Embed(title="Incorrect Answer!", color=EMBED_COLOR)
+            embed = discord.Embed(color=EMBED_COLOR)
             embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
-            embed.add_field(name="Answer",
+            embed.add_field(name="Incorrect Answer!",
                             value=f"Sorry {ctx.message.author.mention}! You are incorrect. Can I tempt you " +
                                   f"in taking a ?hint ? If you'd like to give up, use ?showanswer",
                             inline=False)
         else:
-            embed = discord.Embed(title="Incorrect Answer!", color=EMBED_COLOR)
+            embed = discord.Embed(color=EMBED_COLOR)
             embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
-            embed.add_field(name="Answer",
+            embed.add_field(name="Incorrect Answer!",
                             value=f"Sorry {ctx.message.author.mention}! You are incorrect. There are no hints" +
                                   " for this riddle. If you'd like to give up, use ?showanswer",
                             inline=False)
@@ -117,7 +116,7 @@ def create_answer_embed(ctx, riddle_id, riddle, hints, answers):
 
 
 def create_showanswer_embed(riddle_id, riddle, hints, answers):
-    embed = discord.Embed(title="Answer!", color=EMBED_COLOR)
+    embed = discord.Embed(color=EMBED_COLOR)
     embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
     for hint_idx, hint in enumerate(hints):
         embed.add_field(name=f"Hint #{hint_idx + 1}", value=f"|| {hints[hint_idx]} ||",
