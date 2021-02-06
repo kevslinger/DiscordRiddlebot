@@ -82,7 +82,8 @@ class RiddleCog(commands.Cog):
 
         if self.current_riddle is not None:
             self.current_given_hints += 1
-            embed = utils.create_hint_embed(self.current_riddle, self.current_riddle_hints, self.current_given_hints)
+            embed = utils.create_hint_embed(self.current_riddle_id, self.current_riddle, self.current_riddle_hints,
+                                            self.current_given_hints)
         else:
             embed = utils.create_empty_embed()
 
@@ -113,7 +114,7 @@ class RiddleCog(commands.Cog):
                                 " text! To cover your answer, surround it in \|\| (e.g. ?answer \|\| my answer \|\|)",
                                 inline=False)
             else:
-                embed = utils.create_answer_embed(ctx, self.current_riddle, self.current_riddle_hints,
+                embed = utils.create_answer_embed(ctx, self.current_riddle_id, self.current_riddle, self.current_riddle_hints,
                                                   self.current_riddle_possible_answers)
                 embed.set_author(name="Submitted a Guess!", icon_url=ctx.message.author.avatar_url)
         else:
@@ -133,8 +134,8 @@ class RiddleCog(commands.Cog):
         print("Received ?showanswer")
 
         if self.current_riddle is not None:
-            embed = utils.create_showanswer_embed(self.current_riddle, self.current_riddle_hints,
-                                                  self.current_riddle_possible_answers)
+            embed = utils.create_showanswer_embed(self.current_riddle_id, self.current_riddle,
+                                                  self.current_riddle_hints, self.current_riddle_possible_answers)
             embed.set_author(name="Giving Up!", icon_url=ctx.message.author.avatar_url)
             await ctx.send(embed=embed)
             self.reset_riddle()
