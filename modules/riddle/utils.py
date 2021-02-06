@@ -20,7 +20,10 @@ def create_riddle_embed(riddle_id, riddle, num_hints):
     embed.add_field(name="Riddle", value=f"{riddle}", inline=False)
     embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!",
                     inline=False)
-    embed.add_field(name="Hint", value=f"If you're stuck, try ?hint to get a hint.\n" +
+    if num_hints == 0:
+        embed.add_field(name="Hint", value="Sorry, there are no hints for this riddle!", inline=False)
+    else:
+        embed.add_field(name="Hint", value=f"If you're stuck, try ?hint to get a hint.\n" +
                                        f"There are {num_hints} hints for this riddle", inline=False)
     embed.add_field(name="New Riddle", value="Want a new riddle? Force me to give you one with ?forceriddle",
                     inline=False)

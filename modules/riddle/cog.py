@@ -99,26 +99,25 @@ class RiddleCog(commands.Cog):
         """
         # log command in console
         print("Received ?answer")
+        if self.current_riddle is not None:
+            user_answer = ctx.message.content.replace('?answer', '').strip()
+            # If the user does not include any additional arguments, then show them how
+            # To properly use the ?answer command
+            if user_answer == '':
+                embed = utils.create_empty_answer_command_embed()
 
-        user_answer = ctx.message.content.replace('?answer', '').strip()
-        # If the user does not include any additional arguments, then show them how
-        # To properly use the ?answer command
-        if user_answer == '':
-            embed = utils.create_empty_answer_command_embed()
-
-        # If the user does not spoiler text their answer, do not answer them
-        elif not user_answer.startswith('||') or not user_answer.endswith('||'):
-            embed = discord.Embed(title="Spoiler Text Please!", icon_url=ctx.message.author.avatar_url)
-            embed.add_field(name="Hide your answer", value="I will not check your answer until you hide it in spoiler" +
-                            " text! To cover your answer, surround it in \|\| (e.g. ?answer \|\| my answer \|\|)",
-                            inline=False)
-        else:
-            if self.current_riddle is not None:
+            # If the user does not spoiler text their answer, do not answer them
+            elif not user_answer.startswith('||') or not user_answer.endswith('||'):
+                embed = discord.Embed(title="Spoiler Text Please!", icon_url=ctx.message.author.avatar_url)
+                embed.add_field(name="Hide your answer", value="I will not check your answer until you hide it in spoiler" +
+                                " text! To cover your answer, surround it in \|\| (e.g. ?answer \|\| my answer \|\|)",
+                                inline=False)
+            else:
                 embed = utils.create_answer_embed(ctx, self.current_riddle, self.current_riddle_hints,
                                                   self.current_riddle_possible_answers)
                 embed.set_author(name="Submitted a Guess!", icon_url=ctx.message.author.avatar_url)
-            else:
-                embed = utils.create_empty_embed()
+        else:
+            embed = utils.create_empty_embed()
 
         await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
 
