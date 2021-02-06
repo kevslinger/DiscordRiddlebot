@@ -97,7 +97,7 @@ def create_answer_embed(ctx, riddle_id, riddle, hints, answers):
         embed = discord.Embed(color=EMBED_COLOR)
         embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
         if len(answers) > 1:
-            possible_answers = f"I would have accepted any of || [ {", ".join(answers)} ] ||"
+            possible_answers = f"I would have accepted any of || [ {', '.join(answers)} ] ||"
         else:
             possible_answers = f"The answer is || {answers[0]} ||"
         embed.add_field(name="Correct Answer!",
