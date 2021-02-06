@@ -103,7 +103,7 @@ class RiddleCog(commands.Cog):
         print("Received ?hint")
 
         if self.current_riddle is not None:
-            embed = discord.Embed(title=f"Hint Requested by {ctx.message.author}", color=utils.EMBED_COLOR)
+            embed = discord.Embed(title=f"Hint!", color=utils.EMBED_COLOR)
             embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
             # Increment total number of hints asked for this riddle
             self.current_given_hints += 1
