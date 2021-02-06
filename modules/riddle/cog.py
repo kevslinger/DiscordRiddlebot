@@ -148,7 +148,7 @@ class RiddleCog(commands.Cog):
             # If we there are more hints left
             else:
                 for hint_idx, hint in enumerate(self.current_riddle_hints[:self.current_given_hints]):
-                    embed.add_field(name=f"Hint {hint_idx}", value=f"{hint}", inline=False)
+                    embed.add_field(name=f"Hint {hint_idx + 1}", value=f"|| {hint} ||", inline=False)
                 embed.add_field(name=f"Hints Left", value=f"There are " +
                             f"{len(self.current_riddle_hints) - self.current_given_hints} hints left for this riddle!",
                                 inline=False)
@@ -247,7 +247,7 @@ class RiddleCog(commands.Cog):
             #        f"as a correct answer\n"
             #output_msg += "Thanks for playing! Use ?riddle to get a new riddle."
             embed = discord.Embed(title="Answer!", color=utils.EMBED_COLOR)
-            embed.add_field(named="Riddle", value=f"{self.current_riddle}", inline=False)
+            embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
             for hint_idx, hint in enumerate(self.current_riddle_hints):
                 embed.add_field(name=f"Hint #{hint_idx + 1}", value=f"|| {self.current_riddle_hints[hint_idx]} ||",
                                 inline=False)
