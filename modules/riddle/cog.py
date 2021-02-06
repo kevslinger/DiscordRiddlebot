@@ -1,18 +1,12 @@
-import os
 import random
-import json
 from dotenv.main import load_dotenv
 import discord
 from discord.ext import commands
-import gspread
 import asyncio
-from oauth2client.service_account import ServiceAccountCredentials
+import os
 import modules.riddle.utils as utils
 
 load_dotenv()
-
-JSON_PARAMS = ["type", "project_id", "private_key_id", "private_key", "client_email", "client_id", "auth_uri",
-               "token_uri", "auth_provider_x509_cert_url", "client_x509_cert_url"]
 
 
 # RIDDLE_ROLE_ID = int(os.getenv("RIDDLE_ROLE_ID")) #TODO: create riddle role?
@@ -26,25 +20,10 @@ class RiddleCog(commands.Cog):
         self.current_riddle_hints = None
         self.current_given_hints = 0
 
-        #######
         # Google Sheets Authentication and Initialization
-        #######
-
-        # Scope of what we can do in google drive
-        scopes = ['https://www.googleapis.com/auth/spreadsheets']
+        client = utils.client()
 
         sheet_key = os.getenv('SHEET_KEY').replace('\'', '')
-
-        # Write the credentials file if we don't have it
-        if not os.path.exists('client_secret.json'):
-            json_creds = dict()
-            for param in JSON_PARAMS:
-                json_creds[param] = os.getenv(param).replace('\"', '').replace('\\n', '\n')
-            with open('client_secret.json', 'w') as f:
-                json.dump(json_creds, f)
-        creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scopes)
-        client = gspread.authorize(creds)
-        
         sheet = client.open_by_key(sheet_key).worksheet("Riddles")
         # TODO: Use Pandas Dataframe to store riddles?
         self.riddles = sheet.get_all_values()[1:]
@@ -193,11 +172,6 @@ class RiddleCog(commands.Cog):
                 embed.add_field(name="Answer", value=f"Congrats {ctx.message.author.mention}! You are correct.{possible_answers}",
                                 inline=False)
                 embed.set_author(name="Correct Answer!", icon_url=ctx.message.author.avatar_url)
-
-                #await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
-                #await ctx.send(f"Congrats {ctx.message.author.mention}! You are correct. All acceptable answers were  " +
-                #               f"||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}|| ",
-                #               reference=ctx.message, mention_author=True)
             else:
                 if len(self.current_riddle_hints) > 1:
                     embed = discord.Embed(title="Incorrect Answer!", color=utils.EMBED_COLOR)
@@ -207,10 +181,6 @@ class RiddleCog(commands.Cog):
                                           f"in taking a ?hint ? If you'd like to give up, use ?showanswer",
                                     inline=False)
                     embed.set_author(name="Incorrect Answer", icon_url=ctx.message.author.avatar_url)
-                    #await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
-                    #await ctx.send(embed=embed)
-                    #await ctx.send(f"You're wrong {ctx.message.author.mention}. Can I tempt you in taking a ?hint? " + \
-                    #               "If you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
                 else:
                     embed = discord.Embed(title="Incorrect Answer!", color=utils.EMBED_COLOR)
                     embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
@@ -219,16 +189,10 @@ class RiddleCog(commands.Cog):
                                           " for this riddle. If you'd like to give up, use ?showanswer",
                                     inline=False)
                     embed.set_author(name="Incorrect Answer", icon_url=ctx.message.author.avatar_url)
-                    #await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
-                    #await ctx.send(embed=embed)
-                    #await ctx.send(f"You're wrong {ctx.message.author.mention}. There are no hints for this riddle, but" + \
-                    #               f" if you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
         else:
             embed = utils.create_empty_embed()
-            #embed.set_author(name="No Riddle", icon_url=ctx.message.author.avatar_url)
-            #await ctx.send(embed=embed)
-            #await ctx.send("No current riddle. Use ?riddle to receive a riddle")
-        await ctx.send(embed=embed)
+
+        await ctx.send(embed=embed, mention_author=True)
 
     # Command to use when the user has given up.
     # displays the answer (in spoiler text)
@@ -242,7 +206,7 @@ class RiddleCog(commands.Cog):
         print("Received ?showanswer")
 
         if self.current_riddle is not None:
-            output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
+            #output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
             #if len(self.current_riddle_possible_answers.split(',')) > 1:
             #    output_msg += f"I would have accepted any of " + \
             #        f"|| {'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'} ||" + \
@@ -260,12 +224,11 @@ class RiddleCog(commands.Cog):
             else:
                 embed.add_field(name="Answer", value=f"The answer is || {self.current_riddle_possible_answers[0]} ||",
                                 inline=False)
-            await ctx.send(output_msg)
+            await ctx.send(embed=embed)
             self.reset_riddle()
         else:
             embed = utils.create_empty_embed()
             await ctx.send(embed=embed)
-            await ctx.send("No current riddle. Use ?riddle to receive a riddle")
 
     # Function to clean the bot's riddle so it can start a new one.
     def reset_riddle(self):
