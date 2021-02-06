@@ -97,11 +97,11 @@ def create_answer_embed(ctx, riddle_id, riddle, hints, answers):
         embed = discord.Embed(color=EMBED_COLOR)
         embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
         if len(answers) > 1:
-            possible_answers = " I would have accepted any of || [" + ", ".join(answers) + "] ||"
+            possible_answers = f"I would have accepted any of || [ {", ".join(answers)} ] ||"
         else:
-            possible_answers = answers[0]
+            possible_answers = f"The answer is || {answers[0]} ||"
         embed.add_field(name="Correct Answer!",
-                        value=f"Congrats {ctx.message.author.mention}! You are correct.{possible_answers}",
+                        value=f"Congrats {ctx.message.author.mention}! You are correct. {possible_answers}",
                         inline=False)
         embed.set_author(name="Answered Correctly!", icon_url=ctx.message.author.avatar_url)
     else:
