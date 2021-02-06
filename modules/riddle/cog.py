@@ -89,7 +89,7 @@ class RiddleCog(commands.Cog):
 
         if self.current_riddle is not None:
             embed = utils.create_riddle_embed(self.current_riddle_id, self.current_riddle, len(self.current_riddle_hints))
-            embed.set_author(name=ctx.message.author, icon_url=ctx.message.author.avatar_url)
+            embed.set_author(name="Current Riddle", icon_url=ctx.message.author.avatar_url)
             await ctx.send(embed=embed)
             #await ctx.send(f"The current riddle is: {self.current_riddle}.\nWant a new one? " + \
             #               f"Force me to give you a new riddle with ?forceriddle")
@@ -111,7 +111,7 @@ class RiddleCog(commands.Cog):
             self.current_riddle_hints.append(riddle_row[hint_idx])
         embed = utils.create_riddle_embed(self.current_riddle_id, self.current_riddle, len(self.current_riddle_hints))
 
-        embed.set_author(name=ctx.message.author, icon_url=ctx.message.author.avatar_url)
+        embed.set_author(name="New Riddle!", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
         # Send the hint out. Good luck, users!
@@ -141,7 +141,7 @@ class RiddleCog(commands.Cog):
             # Iterate over the entire list and then indicate there are no more hints left
             elif self.current_given_hints >= len(self.current_riddle_hints):
                 for hint_idx, hint in enumerate(self.current_riddle_hints):
-                    embed.add_field(name=f"Hint #{hint_idx}", value=f"||{self.current_riddle_hints[hint_idx]}||",
+                    embed.add_field(name=f"Hint #{hint_idx+1}", value=f"|| {self.current_riddle_hints[hint_idx]} ||",
                                     inline=False)
                 embed.add_field(name=f"Out of Hints", value="There are no more hints for this riddle!", inline=False)
                 #await ctx.send(embed=embed)
@@ -157,7 +157,7 @@ class RiddleCog(commands.Cog):
             embed = utils.create_empty_embed()
             #await ctx.send(embed=embed)
 
-        embed.set_author(name=ctx.message.author, icon_url=ctx.message.author.avatar_url)
+        embed.set_author(name="Hint!", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
     # Command to check the user's answer. They will be replied to telling them whether or not their
@@ -175,7 +175,6 @@ class RiddleCog(commands.Cog):
             print(ctx.message.content)
             if ctx.message.content == '?answer':
                 embed = utils.create_answer_command_embed()
-                embed.set_author(name=ctx.message.author, icon_url=ctx.message.author.avatar_url)
                 await ctx.send(embed=embed)
                 #await ctx.send("Usage: ?answer ||your answer||")
                 return
@@ -188,13 +187,13 @@ class RiddleCog(commands.Cog):
                 embed = discord.Embed(title="Correct Answer!", color=utils.EMBED_COLOR)
                 embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
                 if len(self.current_riddle_possible_answers) > 1:
-                    possible_answers = " I would have accepted any of ||[" + \
-                                       ", ".join(self.current_riddle_possible_answers.split(",")) + "]||"
+                    possible_answers = " I would have accepted any of || [" + \
+                                       ", ".join(self.current_riddle_possible_answers.split(",")) + "] ||"
                 else:
                     possible_answers = ""
                 embed.add_field(name="Answer", value=f"Congrats {ctx.message.author.mention}! You are correct.{possible_answers}",
                                 inline=False)
-                embed.set_author(name=ctx.message.author, icon_url=ctx.message.author.avatar_url)
+                embed.set_author(name="Correct Answer!", icon_url=ctx.message.author.avatar_url)
 
                 await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
                 #await ctx.send(f"Congrats {ctx.message.author.mention}! You are correct. All acceptable answers were  " +
@@ -208,7 +207,7 @@ class RiddleCog(commands.Cog):
                                     value=f"Sorry {ctx.message.author.mention}! You are incorrect. Can I tempt you " +
                                           f"in taking a ?hint ? If you'd like to give up, use ?showanswer",
                                     inline=False)
-                    embed.set_author(name=ctx.message.author, icon_url=ctx.message.author.avatar_url)
+                    embed.set_author(name="Incorrect Answer", icon_url=ctx.message.author.avatar_url)
                     await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
                     #await ctx.send(f"You're wrong {ctx.message.author.mention}. Can I tempt you in taking a ?hint? " + \
                     #               "If you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
@@ -219,13 +218,13 @@ class RiddleCog(commands.Cog):
                                     value=f"Sorry {ctx.message.author.mention}! You are incorrect. There are no hints" +
                                           " for this riddle. If you'd like to give up, use ?showanswer",
                                     inline=False)
-                    embed.set_author(name=ctx.message.author, icon_url=ctx.message.author.avatar_url)
+                    embed.set_author(name="Incorrect Answer", icon_url=ctx.message.author.avatar_url)
                     await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
                     #await ctx.send(f"You're wrong {ctx.message.author.mention}. There are no hints for this riddle, but" + \
                     #               f" if you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
         else:
             embed = utils.create_empty_embed()
-            embed.set_author(name=ctx.message.author, icon_url=ctx.message.author.avatar_url)
+            embed.set_author(name="No Riddle", icon_url=ctx.message.author.avatar_url)
             await ctx.send(embed=embed)
             #await ctx.send("No current riddle. Use ?riddle to receive a riddle")
                 
@@ -244,7 +243,7 @@ class RiddleCog(commands.Cog):
             output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
             if len(self.current_riddle_possible_answers.split(',')) > 1:
                 output_msg += f"I would have accepted any of " + \
-                    f"||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}||" + \
+                    f"|| {'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'} ||" + \
                     f"as a correct answer\n"
             output_msg += "Thanks for playing! Use ?riddle to get a new riddle."
             await ctx.send(output_msg)
