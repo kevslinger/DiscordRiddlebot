@@ -224,7 +224,7 @@ class RiddleCog(commands.Cog):
                     #               f" if you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
         else:
             embed = utils.create_empty_embed()
-            embed.set_author(name="No Riddle", icon_url=ctx.message.author.avatar_url)
+            #embed.set_author(name="No Riddle", icon_url=ctx.message.author.avatar_url)
             await ctx.send(embed=embed)
             #await ctx.send("No current riddle. Use ?riddle to receive a riddle")
                 
@@ -241,14 +241,28 @@ class RiddleCog(commands.Cog):
 
         if self.current_riddle is not None:
             output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
+            #if len(self.current_riddle_possible_answers.split(',')) > 1:
+            #    output_msg += f"I would have accepted any of " + \
+            #        f"|| {'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'} ||" + \
+            #        f"as a correct answer\n"
+            #output_msg += "Thanks for playing! Use ?riddle to get a new riddle."
+            embed = discord.Embed(title="Answer!", color=utils.EMBED_COLOR)
+            embed.add_field(named="Riddle", value=f"{self.current_riddle}", inline=False)
+            for hint_idx, hint in enumerate(self.current_riddle_hints):
+                embed.add_field(name=f"Hint #{hint_idx + 1}", value=f"|| {self.current_riddle_hints[hint_idx]} ||",
+                                inline=False)
             if len(self.current_riddle_possible_answers.split(',')) > 1:
-                output_msg += f"I would have accepted any of " + \
-                    f"|| {'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'} ||" + \
-                    f"as a correct answer\n"
-            output_msg += "Thanks for playing! Use ?riddle to get a new riddle."
+                embed.add_field(name="Answer", value="I would have accepted any of " +
+                            f"|| {'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'} ||",
+                            inline=False)
+            else:
+                embed.add_field(name="Answer", value=f"The answer is || {self.current_riddle_possible_answers[0]} ||",
+                                inline=False)
             await ctx.send(output_msg)
             self.reset_riddle()
         else:
+            embed = utils.create_empty_embed()
+            await ctx.send(embed=embed)
             await ctx.send("No current riddle. Use ?riddle to receive a riddle")
 
     # Function to clean the bot's riddle so it can start a new one.
