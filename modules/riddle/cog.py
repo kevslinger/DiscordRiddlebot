@@ -2,11 +2,12 @@ import os
 import random
 import json
 from dotenv.main import load_dotenv
-from discord.ext import commands
 import discord
+from discord.ext import commands
 import gspread
 import asyncio
 from oauth2client.service_account import ServiceAccountCredentials
+import modules.riddle.utils as utils
 
 load_dotenv()
 
@@ -45,6 +46,7 @@ class RiddleCog(commands.Cog):
         client = gspread.authorize(creds)
         
         sheet = client.open_by_key(sheet_key).worksheet("Riddles")
+        # TODO: Use Pandas Dataframe to store riddles?
         self.riddles = sheet.get_all_values()[1:]
         
         bot.loop.create_task(self.reload(bot, sheet_key, client))
@@ -58,7 +60,6 @@ class RiddleCog(commands.Cog):
             sheet = client.open_by_key(sheet_key).sheet1
             self.riddles = sheet.get_all_values()[1:]
             print("Reloaded riddle sheet")
-
             
     # When we have an active riddle, using ?riddle will not change the riddle
     # Instead, someone will need to use ?forceriddle to get a new one
@@ -67,21 +68,13 @@ class RiddleCog(commands.Cog):
         """
         Reset the current riddle and give a new one
         Usage: ?forceriddle
+        Alias: ?force
         """
         # log command in console
         print("Received ?forceriddle")
 
         self.reset_riddle()
         await self.riddle(ctx)
-
-
-    def create_riddle_embed(self):
-        embed = discord.Embed(title=f"Riddle #{self.current_riddle_id}", color=0xd4e4ff)
-        embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
-        embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!", inline=False)
-        embed.add_field(name="Hint", value="If you're stuck, try ?hint to get a hint.", inline=False)
-        embed.add_field(name="New Riddle", value="Want a new riddle? Force me to give you one with ?forceriddle")
-        return embed
 
     # Command to give the user a riddle.
     # If there is already an active riddle, the user will be shown that
@@ -91,12 +84,13 @@ class RiddleCog(commands.Cog):
         """
         Give a riddle from our Riddle Sheet
         Usage: ?riddle
+        Alias: ?r
         """
         # log command in console
         print("Received ?riddle")
 
         if self.current_riddle is not None:
-            embed = self.create_riddle_embed()
+            embed = utils.create_riddle_embed(self.current_riddle_id, self.current_riddle, len(self.current_riddle_hints))
             await ctx.send(embed=embed)
             #await ctx.send(f"The current riddle is: {self.current_riddle}.\nWant a new one? " + \
             #               f"Force me to give you a new riddle with ?forceriddle")
@@ -116,7 +110,7 @@ class RiddleCog(commands.Cog):
             if riddle_row[hint_idx] is None or riddle_row[hint_idx] == '':
                 continue
             self.current_riddle_hints.append(riddle_row[hint_idx])
-        embed = self.create_riddle_embed()
+        embed = utils.create_riddle_embed(self.current_riddle_id, self.current_riddle, len(self.current_riddle_hints))
         
         await ctx.send(embed=embed)
 
@@ -130,21 +124,37 @@ class RiddleCog(commands.Cog):
         """
         Gives a hint
         Usage: ?hint
+        Alias: ?h
         """
         # Log command in console
         print("Received ?hint")
-        
+
         if self.current_riddle is not None:
-            if len(self.current_riddle_hints) > 0:
-                self.current_given_hints += 1
-                await ctx.send(f"Hint {self.current_given_hints}: ||{self.current_riddle_hints.pop(0)}||")
-            elif self.current_given_hints > 0:
-                await ctx.send(f"Only {self.current_given_hints} hints were available for this riddle\n" + \
-                               f"If you're stumped, you can use ?showanswer to get the answer.")
+            embed = discord.Embed(title=f"Hint Requested by {ctx.message.author}", color=utils.EMBED_COLOR)
+            embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
+            # Increment total number of hints asked for this riddle
+            self.current_given_hints += 1
+            # If there are no hints
+            if len(self.current_riddle_hints) == 0:
+                embed.add_field(name=f"No Hints", value="Sorry, there are no hints for this riddle!")
+                await ctx.send(embed=embed)
+            # If the number of hints is more than the number of hints we have
+            # Iterate over the entire list and then indicate there are no more hints left
+            elif self.current_given_hints >= len(self.current_riddle_hints):
+                for hint_idx, hint in enumerate(self.current_riddle_hints):
+                    embed.add_field(name=f"Hint #{hint_idx}")
+                embed.add_field(name=f"Out of Hints", value="There are no more hints for this riddle!")
+                await ctx.send(embed=embed)
+            # If we there are more hints left
             else:
-                await ctx.send(f"No hints for this riddle.\nIf you're stumped, you can use ?showanswer to get the answer.")
+                for hint_idx, hint in enumerate(self.current_riddle_hints[:self.current_given_hints]):
+                    embed.add_field(name=f"Hint {hint_idx}", value=f"{hint}", inline=False)
+                embed.add_field(name=f"Hints Left", value=f"There are " +
+                            "{len(self.current_riddle_hints) - self.current_given_hints} hints left for this riddle!")
+                await ctx.send(embed=embed)
         else:
-            await ctx.send("No current riddle. Use ?riddle to receive a riddle")
+            embed = utils.create_empty_embed()
+            await ctx.send(embed=embed)
 
     # Command to check the user's answer. They will be replied to telling them whether or not their
     # answer is correct. If they are incorrect, they will be asked if they want a hint or to giveup
@@ -160,7 +170,10 @@ class RiddleCog(commands.Cog):
         if self.current_riddle is not None:
             print(ctx.message.content)
             if ctx.message.content == '?answer':
-                await ctx.send("Usage: ?answer ||your answer||")
+                embed = utils.create_answer_embed()
+                embed.set_image(url=ctx.message.author.avatar_url)
+                await ctx.send(embed=embed)
+                #await ctx.send("Usage: ?answer ||your answer||")
                 return
             # People will spoiler their message with ||
             user_answer = ctx.message.content.lower().replace('?answer ', '').replace('|', '').strip()
@@ -188,6 +201,7 @@ class RiddleCog(commands.Cog):
         """
         Gives the correct answer when everyone has given up
         Usage: ?showanswer
+        Aliases: ?show, ?giveup
         """
         # Log command in console
         print("Received ?showanswer")
@@ -211,6 +225,7 @@ class RiddleCog(commands.Cog):
         self.current_riddle_id = None
         self.current_riddle_hints = None
         self.current_given_hints = 0
-        
+
+
 def setup(bot):
     bot.add_cog(RiddleCog(bot))
