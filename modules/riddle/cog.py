@@ -176,7 +176,6 @@ class RiddleCog(commands.Cog):
             if ctx.message.content == '?answer':
                 embed = utils.create_answer_command_embed()
                 await ctx.send(embed=embed)
-                #await ctx.send("Usage: ?answer ||your answer||")
                 return
             # People will spoiler their message with ||
             user_answer = ctx.message.content.lower().replace('?answer ', '').replace('|', '').strip()
@@ -195,7 +194,7 @@ class RiddleCog(commands.Cog):
                                 inline=False)
                 embed.set_author(name="Correct Answer!", icon_url=ctx.message.author.avatar_url)
 
-                await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
+                #await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
                 #await ctx.send(f"Congrats {ctx.message.author.mention}! You are correct. All acceptable answers were  " +
                 #               f"||{'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'}|| ",
                 #               reference=ctx.message, mention_author=True)
@@ -208,7 +207,8 @@ class RiddleCog(commands.Cog):
                                           f"in taking a ?hint ? If you'd like to give up, use ?showanswer",
                                     inline=False)
                     embed.set_author(name="Incorrect Answer", icon_url=ctx.message.author.avatar_url)
-                    await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
+                    #await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
+                    #await ctx.send(embed=embed)
                     #await ctx.send(f"You're wrong {ctx.message.author.mention}. Can I tempt you in taking a ?hint? " + \
                     #               "If you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
                 else:
@@ -219,15 +219,17 @@ class RiddleCog(commands.Cog):
                                           " for this riddle. If you'd like to give up, use ?showanswer",
                                     inline=False)
                     embed.set_author(name="Incorrect Answer", icon_url=ctx.message.author.avatar_url)
-                    await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
+                    #await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
+                    #await ctx.send(embed=embed)
                     #await ctx.send(f"You're wrong {ctx.message.author.mention}. There are no hints for this riddle, but" + \
                     #               f" if you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
         else:
             embed = utils.create_empty_embed()
             #embed.set_author(name="No Riddle", icon_url=ctx.message.author.avatar_url)
-            await ctx.send(embed=embed)
+            #await ctx.send(embed=embed)
             #await ctx.send("No current riddle. Use ?riddle to receive a riddle")
-                
+        await ctx.send(embed=embed)
+
     # Command to use when the user has given up.
     # displays the answer (in spoiler text)
     @commands.command(name='showanswer', aliases=['show', 'giveup'])

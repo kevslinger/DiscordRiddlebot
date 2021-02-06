@@ -16,12 +16,13 @@ class AddRiddleCog(commands.Cog):
         # Log command to console
         print("Received !addriddle")
 
-        embed = discord.Embed(title=f"Add a Riddle!",
+        embed = discord.Embed(title=f"Google Form to Submit a New Riddle!",
                               url="https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg",
                               color=utils.EMBED_COLOR)
-        embed.add_field(name="How to add", value=f"A worthy riddle, you wish to add?\nGo to " +
+        embed.add_field(name="How to add", value=f"A worthy riddle, you wish to add? Go to " +
                         "[this form](https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg)," +
                         " now don't be sad.")
+        embed.set_author(name="Add a Riddle!", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
         #await ctx.send("A worthy riddle, you wish to add?\n" + \
         #               "Go to this form, now don't be sad.\n" + \
