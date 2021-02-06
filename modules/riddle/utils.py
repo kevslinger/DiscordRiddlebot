@@ -16,7 +16,8 @@ def create_riddle_embed(riddle_id, riddle, num_hints):
 
     :return embed: (discord.Embed) The embed we create for the riddle
     """
-    embed = discord.Embed(title=f"Riddle #{riddle_id}", color=EMBED_COLOR)
+    #embed = discord.Embed(title=f"Riddle #{riddle_id}", color=EMBED_COLOR)
+    embed = discord.Embed(color=EMBED_COLOR)
     embed.add_field(name=f"Riddle #{riddle_id}", value=f"{riddle}", inline=False)
     embed.add_field(name="Answering", value="Use ?answer to make a guess. Remember to Spoiler Text your answers!",
                     inline=False)
