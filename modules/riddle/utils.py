@@ -20,7 +20,8 @@ def create_riddle_embed(riddle_id, riddle, num_hints):
                     inline=False)
     embed.add_field(name="Hint", value=f"If you're stuck, try ?hint to get a hint.\n" +
                                        f"There are {num_hints} hints for this riddle", inline=False)
-    embed.add_field(name="New Riddle", value="Want a new riddle? Force me to give you one with ?forceriddle")
+    embed.add_field(name="New Riddle", value="Want a new riddle? Force me to give you one with ?forceriddle",
+                    inline=False)
     return embed
 
 
@@ -31,7 +32,8 @@ def create_empty_embed():
     :return embed: (discord.Embed) The embed we create
     """
     embed = discord.Embed(title="No Riddle!", color=EMBED_COLOR)
-    embed.add_field(name="No Current Riddle", value="Use ?riddle to get a riddle, or ?help to see options.")
+    embed.add_field(name="No Current Riddle", value="Use ?riddle to get a riddle, or ?help to see options.",
+                    inline=False)
     return embed
 
 
@@ -42,7 +44,7 @@ def create_answer_command_embed():
     :return embeD: (discord.Embed) The embed we create
     """
     embed = discord.Embed(title=f"Answer", color=EMBED_COLOR)
-    embed.add_field(name=f"Answer Usage", value="?answer ||your_answer||")
+    embed.add_field(name=f"Answer Usage", value="?answer ||your_answer||", inline=False)
     return embed
 
 

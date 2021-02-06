@@ -135,21 +135,23 @@ class RiddleCog(commands.Cog):
             self.current_given_hints += 1
             # If there are no hints
             if len(self.current_riddle_hints) == 0:
-                embed.add_field(name=f"No Hints", value="Sorry, there are no hints for this riddle!")
+                embed.add_field(name=f"No Hints", value="Sorry, there are no hints for this riddle!", inline=False)
                 #await ctx.send(embed=embed)
             # If the number of hints is more than the number of hints we have
             # Iterate over the entire list and then indicate there are no more hints left
             elif self.current_given_hints >= len(self.current_riddle_hints):
                 for hint_idx, hint in enumerate(self.current_riddle_hints):
-                    embed.add_field(name=f"Hint #{hint_idx}")
-                embed.add_field(name=f"Out of Hints", value="There are no more hints for this riddle!")
+                    embed.add_field(name=f"Hint #{hint_idx}", value=f"||{self.current_riddle_hints[hint_idx]}||",
+                                    inline=False)
+                embed.add_field(name=f"Out of Hints", value="There are no more hints for this riddle!", inline=False)
                 #await ctx.send(embed=embed)
             # If we there are more hints left
             else:
                 for hint_idx, hint in enumerate(self.current_riddle_hints[:self.current_given_hints]):
                     embed.add_field(name=f"Hint {hint_idx}", value=f"{hint}", inline=False)
                 embed.add_field(name=f"Hints Left", value=f"There are " +
-                            "{len(self.current_riddle_hints) - self.current_given_hints} hints left for this riddle!")
+                            f"{len(self.current_riddle_hints) - self.current_given_hints} hints left for this riddle!",
+                                inline=False)
                 #await ctx.send(embed=embed)
         else:
             embed = utils.create_empty_embed()
@@ -184,9 +186,14 @@ class RiddleCog(commands.Cog):
             if user_answer in [correct_answer.lower() for correct_answer in self.current_riddle_possible_answers.split(', ')] or\
                user_answer in [correct_answer.lower() for correct_answer in self.current_riddle_possible_answers.split(',')]:
                 embed = discord.Embed(title="Correct Answer!", color=utils.EMBED_COLOR)
-                embed.add_field(name="Riddle", value=f"{self.current_riddle}")
-                embed.add_field(name="Answer", value=f"Congrats {ctx.message.author.mention}! You are correct. All " +
-                                f"{'[' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]' }||")
+                embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
+                if len(self.current_riddle_possible_answers) > 1:
+                    possible_answers = " I would have accepted any of ||[" + \
+                                       ", ".join(self.current_riddle_possible_answers.split(",")) + "]||"
+                else:
+                    possible_answers = ""
+                embed.add_field(name="Answer", value=f"Congrats {ctx.message.author.mention}! You are correct.{possible_answers}",
+                                inline=False)
                 embed.set_thumbnail(url=ctx.message.author.avatar_url)
 
                 await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
@@ -196,20 +203,22 @@ class RiddleCog(commands.Cog):
             else:
                 if len(self.current_riddle_hints) > 1:
                     embed = discord.Embed(title="Incorrect Answer!", color=utils.EMBED_COLOR)
-                    embed.add_field(name="Riddle", value=f"{self.current_riddle}")
+                    embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
                     embed.add_field(name="Answer",
                                     value=f"Sorry {ctx.message.author.mention}! You are incorrect. Can I tempt you " +
-                                          f"in taking a ?hint ? If you'd like to give up, use ?showanswer")
+                                          f"in taking a ?hint ? If you'd like to give up, use ?showanswer",
+                                    inline=False)
                     embed.set_thumbnail(url=ctx.message.author.avatar_url)
                     await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
                     #await ctx.send(f"You're wrong {ctx.message.author.mention}. Can I tempt you in taking a ?hint? " + \
                     #               "If you'd like to give up, use ?showanswer", reference=ctx.message, mention_author=True)
                 else:
                     embed = discord.Embed(title="Incorrect Answer!", color=utils.EMBED_COLOR)
-                    embed.add_field(name="Riddle", value=f"{self.current_riddle}")
+                    embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
                     embed.add_field(name="Answer",
                                     value=f"Sorry {ctx.message.author.mention}! You are incorrect. There are no hints" +
-                                          " for this riddle. If you'd like to give up, use ?showanswer")
+                                          " for this riddle. If you'd like to give up, use ?showanswer",
+                                    inline=False)
                     embed.set_thumbnail(url=ctx.message.author.avatar_url)
                     await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
                     #await ctx.send(f"You're wrong {ctx.message.author.mention}. There are no hints for this riddle, but" + \
