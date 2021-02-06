@@ -45,7 +45,7 @@ def create_empty_answer_command_embed():
     :return embed: (discord.Embed) The embed we create
     """
     embed = discord.Embed(title="Answer", color=EMBED_COLOR)
-    embed.add_field(name="Answer Usage", value="?answer ||your_answer||", inline=False)
+    embed.add_field(name="Answer Usage", value="?answer ||your answer||", inline=False)
     embed.add_field(name="Giving Up?", value="To give up and see the answer, use ?showanswer", inline=False)
     return embed
 
@@ -125,6 +125,7 @@ def create_showanswer_embed(riddle, hints, answers):
     else:
         embed.add_field(name="Answer", value=f"The answer is || {answers[0]} ||",
                         inline=False)
+    embed.add_field(name="Thanks for Playing!", value="To get a new riddle, use ?riddle")
     return embed
 
 
