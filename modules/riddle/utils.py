@@ -30,12 +30,12 @@ def create_empty_embed():
 
     :return embed: (discord.Embed) The embed we create
     """
-    embed = discord.Embed(title=f"No Riddle!", color=EMBED_COLOR)
+    embed = discord.Embed(title="No Riddle!", color=EMBED_COLOR)
     embed.add_field(name="No Current Riddle", value="Use ?riddle to get a riddle, or ?help to see options.")
     return embed
 
 
-def create_answer_embed():
+def create_answer_command_embed():
     """
     Function to create an embed to display command usage.
     :param command: (str) The command used
@@ -44,3 +44,6 @@ def create_answer_embed():
     embed = discord.Embed(title=f"Answer", color=EMBED_COLOR)
     embed.add_field(name=f"Answer Usage", value="?answer ||your_answer||")
     return embed
+
+
+
