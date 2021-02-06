@@ -22,11 +22,9 @@ class AddRiddleCog(commands.Cog):
         embed.add_field(name="How to add", value=f"A worthy riddle, you wish to add? Go to " +
                         "[this form](https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg)," +
                         " now don't be sad.")
-        embed.set_author(name="Add a Riddle!", icon_url=ctx.message.author.avatar_url)
+        embed.set_author(name="Wants to Add a Riddle!", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
-        #await ctx.send("A worthy riddle, you wish to add?\n" + \
-        #               "Go to this form, now don't be sad.\n" + \
-        #               "https://docs.google.com/forms/d/1-5h97ZZj_6btKZXrrf7t58mPVXVJ48IW5xo69psB1kg")
+
 
 def setup(bot):
     bot.add_cog(AddRiddleCog(bot))

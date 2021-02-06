@@ -68,10 +68,8 @@ class RiddleCog(commands.Cog):
 
         if self.current_riddle is not None:
             embed = utils.create_riddle_embed(self.current_riddle_id, self.current_riddle, len(self.current_riddle_hints))
-            embed.set_author(name="Current Riddle", icon_url=ctx.message.author.avatar_url)
+            embed.set_author(name="See Current Riddle", icon_url=ctx.message.author.avatar_url)
             await ctx.send(embed=embed)
-            #await ctx.send(f"The current riddle is: {self.current_riddle}.\nWant a new one? " + \
-            #               f"Force me to give you a new riddle with ?forceriddle")
             return 
         # TODO: get specific riddle from riddle IDif len()
         riddle_row_num = random.randint(0, len(self.riddles)-1)
@@ -90,12 +88,9 @@ class RiddleCog(commands.Cog):
             self.current_riddle_hints.append(riddle_row[hint_idx])
         embed = utils.create_riddle_embed(self.current_riddle_id, self.current_riddle, len(self.current_riddle_hints))
 
-        embed.set_author(name="New Riddle!", icon_url=ctx.message.author.avatar_url)
+        embed.set_author(name="Requested a New Riddle!", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
-        # Send the hint out. Good luck, users!
-        #await ctx.send(f"Riddle #{self.current_riddle_id}: {self.current_riddle}\nUse ?answer to make a guess. " + \
-        #               f"Remember to Spoiler Text your answers!")
 
     # Command to give a hint. The hint will have spoiler text covering it.
     @commands.command(name='hint', aliases=['h'])
@@ -115,7 +110,6 @@ class RiddleCog(commands.Cog):
             # If there are no hints
             if len(self.current_riddle_hints) == 0:
                 embed.add_field(name=f"No Hints", value="Sorry, there are no hints for this riddle!", inline=False)
-                #await ctx.send(embed=embed)
             # If the number of hints is more than the number of hints we have
             # Iterate over the entire list and then indicate there are no more hints left
             elif self.current_given_hints >= len(self.current_riddle_hints):
@@ -123,20 +117,17 @@ class RiddleCog(commands.Cog):
                     embed.add_field(name=f"Hint #{hint_idx+1}", value=f"|| {self.current_riddle_hints[hint_idx]} ||",
                                     inline=False)
                 embed.add_field(name=f"Out of Hints", value="There are no more hints for this riddle!", inline=False)
-                #await ctx.send(embed=embed)
             # If we there are more hints left
             else:
                 for hint_idx, hint in enumerate(self.current_riddle_hints[:self.current_given_hints]):
-                    embed.add_field(name=f"Hint {hint_idx + 1}", value=f"|| {hint} ||", inline=False)
+                    embed.add_field(name=f"Hint #{hint_idx + 1}", value=f"|| {hint} ||", inline=False)
                 embed.add_field(name=f"Hints Left", value=f"There are " +
                             f"{len(self.current_riddle_hints) - self.current_given_hints} hints left for this riddle!",
                                 inline=False)
-                #await ctx.send(embed=embed)
         else:
             embed = utils.create_empty_embed()
-            #await ctx.send(embed=embed)
 
-        embed.set_author(name="Hint!", icon_url=ctx.message.author.avatar_url)
+        embed.set_author(name="Requested a Hint!", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
     # Command to check the user's answer. They will be replied to telling them whether or not their
@@ -171,7 +162,7 @@ class RiddleCog(commands.Cog):
                     possible_answers = ""
                 embed.add_field(name="Answer", value=f"Congrats {ctx.message.author.mention}! You are correct.{possible_answers}",
                                 inline=False)
-                embed.set_author(name="Correct Answer!", icon_url=ctx.message.author.avatar_url)
+                embed.set_author(name="Answered Correctly!", icon_url=ctx.message.author.avatar_url)
             else:
                 if len(self.current_riddle_hints) > 1:
                     embed = discord.Embed(title="Incorrect Answer!", color=utils.EMBED_COLOR)
@@ -180,7 +171,7 @@ class RiddleCog(commands.Cog):
                                     value=f"Sorry {ctx.message.author.mention}! You are incorrect. Can I tempt you " +
                                           f"in taking a ?hint ? If you'd like to give up, use ?showanswer",
                                     inline=False)
-                    embed.set_author(name="Incorrect Answer", icon_url=ctx.message.author.avatar_url)
+                    embed.set_author(name="Answered Incorrectly", icon_url=ctx.message.author.avatar_url)
                 else:
                     embed = discord.Embed(title="Incorrect Answer!", color=utils.EMBED_COLOR)
                     embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
@@ -188,7 +179,7 @@ class RiddleCog(commands.Cog):
                                     value=f"Sorry {ctx.message.author.mention}! You are incorrect. There are no hints" +
                                           " for this riddle. If you'd like to give up, use ?showanswer",
                                     inline=False)
-                    embed.set_author(name="Incorrect Answer", icon_url=ctx.message.author.avatar_url)
+                    embed.set_author(name="Answered Incorrectly", icon_url=ctx.message.author.avatar_url)
         else:
             embed = utils.create_empty_embed()
 
@@ -206,12 +197,6 @@ class RiddleCog(commands.Cog):
         print("Received ?showanswer")
 
         if self.current_riddle is not None:
-            #output_msg = f"Giving up already? The answer is: ||{self.current_riddle_possible_answers.split(',')[0]}||\n"
-            #if len(self.current_riddle_possible_answers.split(',')) > 1:
-            #    output_msg += f"I would have accepted any of " + \
-            #        f"|| {'[ ' + ', '.join(self.current_riddle_possible_answers.split(',')) + ' ]'} ||" + \
-            #        f"as a correct answer\n"
-            #output_msg += "Thanks for playing! Use ?riddle to get a new riddle."
             embed = discord.Embed(title="Answer!", color=utils.EMBED_COLOR)
             embed.add_field(name="Riddle", value=f"{self.current_riddle}", inline=False)
             for hint_idx, hint in enumerate(self.current_riddle_hints):
