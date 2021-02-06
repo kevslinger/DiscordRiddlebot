@@ -44,15 +44,15 @@ def create_empty_answer_command_embed():
     Function to create an embed to display command usage.
     :return embed: (discord.Embed) The embed we create
     """
-    embed = discord.Embed(title=f"Answer", color=EMBED_COLOR)
-    embed.add_field(name=f"Answer Usage", value="?answer ||your_answer||", inline=False)
+    embed = discord.Embed(title="Answer", color=EMBED_COLOR)
+    embed.add_field(name="Answer Usage", value="?answer ||your_answer||", inline=False)
+    embed.add_field(name="Giving Up?", value="To give up and see the answer, use ?showanswer", inline=False)
     return embed
 
 
 def create_hint_embed(riddle, hints, num_given_hints):
     embed = discord.Embed(title=f"Hint!", color=EMBED_COLOR)
     embed.add_field(name="Riddle", value=f"{riddle}", inline=False)
-    # Increment total number of hints asked for this riddle
 
     # If there are no hints
     if len(hints) == 0:
@@ -76,6 +76,7 @@ def create_hint_embed(riddle, hints, num_given_hints):
 
 
 def create_answer_embed(ctx, riddle, hints, answers):
+    # Do not accept an answer that isn't spoilered!
     # People will spoiler their message with ||
     user_answer = ctx.message.content.lower().replace('?answer ', '').replace('|', '').strip()
     # some answers are answer1, answer2 and others are answer1,answer2

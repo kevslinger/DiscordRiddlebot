@@ -100,19 +100,26 @@ class RiddleCog(commands.Cog):
         # log command in console
         print("Received ?answer")
 
-        if ctx.message.content == '?answer':
+        user_answer = ctx.message.content.replace('?answer', '').strip()
+        # If the user does not include any additional arguments, then show them how
+        # To properly use the ?answer command
+        if user_answer == '':
             embed = utils.create_empty_answer_command_embed()
-            await ctx.send(embed=embed)
-            return
 
-        if self.current_riddle is not None:
-            embed = utils.create_answer_embed(ctx, self.current_riddle, self.current_riddle_hints,
-                                              self.current_riddle_possible_answers)
-            embed.set_author(name="Submitted a Guess!", icon_url=ctx.message.author.avatar_url)
+        # If the user does not spoiler text their answer, do not answer them
+        elif not user_answer.startswith('||') or not user_answer.endswith('||'):
+            embed = discord.Embed(title="Spoiler Text Please!", icon_url=ctx.message.author.avatar_url)
+            embed.add_field(name="Hide your answer", value="I will not check your answer until you hide it in spoiler" +
+                            " text! To cover your answer, surround it in \|\| (e.g. \|\| my answer \|\|", inline=False)
         else:
-            embed = utils.create_empty_embed()
+            if self.current_riddle is not None:
+                embed = utils.create_answer_embed(ctx, self.current_riddle, self.current_riddle_hints,
+                                                  self.current_riddle_possible_answers)
+                embed.set_author(name="Submitted a Guess!", icon_url=ctx.message.author.avatar_url)
+            else:
+                embed = utils.create_empty_embed()
 
-        await ctx.send(embed=embed, mention_author=True)
+        await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
 
     # Command to use when the user has given up.
     # displays the answer (in spoiler text)
