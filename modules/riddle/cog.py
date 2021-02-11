@@ -5,6 +5,7 @@ from discord.ext import commands
 import asyncio
 import os
 import modules.riddle.utils as utils
+import constants
 
 load_dotenv()
 
@@ -85,7 +86,7 @@ class RiddleCog(commands.Cog):
             embed = utils.create_hint_embed(self.current_riddle_id, self.current_riddle, self.current_riddle_hints,
                                             self.current_given_hints)
         else:
-            embed = utils.create_empty_embed()
+            embed = utils.create_empty_embed(ctx)
 
         embed.set_author(name="Requested a Hint!", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
@@ -99,13 +100,13 @@ class RiddleCog(commands.Cog):
         Usage: ?answer ||your answer||
         """
         # log command in console
-        print("Received ?answer")
+        print(f"Received {constants.BOT_PREFIX}answer")
         if self.current_riddle is not None:
-            user_answer = ctx.message.content.replace('?answer', '').strip()
+            user_answer = ctx.message.content.replace(f'{constants.BOT_PREFIX}answer', '').strip()
             # If the user does not include any additional arguments, then show them how
             # To properly use the ?answer command
             if user_answer == '':
-                embed = utils.create_empty_answer_command_embed()
+                embed = utils.create_empty_answer_command_embed(ctx)
 
             # If the user does not spoiler text their answer, do not answer them
             elif not user_answer.startswith('||') or not user_answer.endswith('||'):
@@ -117,7 +118,7 @@ class RiddleCog(commands.Cog):
                 embed = utils.create_answer_embed(ctx, self.current_riddle_id, self.current_riddle, self.current_riddle_hints,
                                                   self.current_riddle_possible_answers)
         else:
-            embed = utils.create_empty_embed()
+            embed = utils.create_empty_embed(ctx)
 
         await ctx.send(embed=embed, reference=ctx.message, mention_author=True)
 
@@ -139,7 +140,7 @@ class RiddleCog(commands.Cog):
             await ctx.send(embed=embed)
             self.reset_riddle()
         else:
-            embed = utils.create_empty_embed()
+            embed = utils.create_empty_embed(ctx)
             await ctx.send(embed=embed)
 
     # Reload the Google sheet every 10 minutes so we can dynamically add

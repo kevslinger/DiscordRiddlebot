@@ -30,19 +30,20 @@ def create_riddle_embed(riddle_id, riddle, num_hints):
     return embed
 
 
-def create_empty_embed():
+def create_empty_embed(ctx):
     """
     Function to create an embed to say there is no riddle
 
     :return embed: (discord.Embed) The embed we create
     """
-    embed = discord.Embed(title="No Riddle!", color=EMBED_COLOR)
+    embed = discord.Embed(color=EMBED_COLOR)
     embed.add_field(name="No Current Riddle", value="Use ?riddle to get a riddle, or ?help to see options.",
                     inline=False)
+    embed.set_author(name="No Riddle!", icon_url=ctx.message.author.avatar_url)
     return embed
 
 
-def create_empty_answer_command_embed():
+def create_empty_answer_command_embed(ctx):
     """
     Function to create an embed to display command usage.
     :return embed: (discord.Embed) The embed we create
@@ -50,6 +51,7 @@ def create_empty_answer_command_embed():
     embed = discord.Embed(color=EMBED_COLOR)
     embed.add_field(name="Answer Usage", value="?answer ||your answer||", inline=False)
     embed.add_field(name="Giving Up?", value="To give up and see the answer, use ?showanswer", inline=False)
+    embed.set_author(name="Needs to Include an Answer!", icon_url=ctx.message.author.avatar_url)
     return embed
 
 
